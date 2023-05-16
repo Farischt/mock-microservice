@@ -17,8 +17,7 @@ This is a mock pricing microservice that can be used to test the communication w
 
 1. Clone the repository
 2. Run `make deps` to install dependencies
-3. Run `make build` to build the binary
-4. Run `make start p=3000` to run the binary
+3. Run `make start p=3000` to run the binary
 
 ### Run with Docker
 
