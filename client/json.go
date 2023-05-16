@@ -14,7 +14,7 @@ type Client struct {
 	baseUrl string
 }
 
-func New(baseUrl string) IClient {
+func New(baseUrl string) *Client {
 	return &Client{
 		baseUrl,
 	}

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"strings"
-	"time"
 
 	"github.com/farischt/micro/types"
 )
@@ -24,7 +23,6 @@ func (s *priceService) parseCoin(coin string) string {
 }
 
 func (s *priceService) GetPrice(ctx context.Context, coin string) (float64, error) {
-	time.Sleep(142 * time.Millisecond)
 	price, exist := priceDatabaseMock[s.parseCoin(coin)]
 
 	if !exist {

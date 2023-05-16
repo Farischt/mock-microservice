@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "github.com/farischt/micro/proto";
+
+service PriceService {
+    rpc GetPrice(PriceRequest) returns (PriceResponse) {}
+}
+
+message PriceRequest {
+    string coin = 1;
+}
+
+message PriceResponse {
+    string coin = 1;
+    float price = 2;
+}
