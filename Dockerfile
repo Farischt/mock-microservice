@@ -11,7 +11,7 @@ COPY . ./
 RUN make deps
 RUN make build-linux
 
-EXPOSE 3000
+EXPOSE 9090
 
-CMD ["make", "start", "p=3000"]
+CMD ["make", "dev", "p=9090"]
 
