@@ -26,7 +26,7 @@ func NewJsonApi(service PriceService, addr uint) *Server {
 func (s *Server) Start() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(200)
 		writeJSON(w, 200, map[string]string{
 			"service": "price",
@@ -37,7 +37,7 @@ func (s *Server) Start() {
 
 	logrus.WithFields(logrus.Fields{
 		"port": s.addr,
-	}).Info("Server starting:")
+	}).Info("JSON Server starting:")
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", s.addr), r)
 
