@@ -30,6 +30,9 @@ func main() {
 		grpcClient.GetPrice(ctx, &proto.PriceRequest{
 			Coin: "ETH",
 		})
+		grpcClient.GetPrice(ctx, &proto.PriceRequest{
+			Coin: "ET",
+		})
 	}(doneChan)
 
 	// jsonClient := client.New(fmt.Sprintf("http://localhost:%d", 8000))
@@ -40,6 +43,6 @@ func main() {
 	// 	jsonClient.GetCoinPrice(ctx, "ETH")
 	// }()
 
-	// server := NewJsonApi(service, 8000)
-	// server.Start()
+	server := NewJsonApi(service, 8000)
+	server.Start()
 }
