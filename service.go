@@ -9,6 +9,7 @@ import (
 
 type PriceService interface {
 	GetPrice(context.Context, string) (float64, error)
+	RemoveCoin(context.Context, string) (error)
 }
 
 func NewPriceService() PriceService {
@@ -30,4 +31,16 @@ func (s *priceService) GetPrice(ctx context.Context, coin string) (float64, erro
 	}
 
 	return price, nil
+}
+
+func (s *priceService) RemoveCoin(ctx context.Context, coin string) error {
+	key := s.parseCoin(coin)
+	_, exist := priceDatabaseMock[key]
+
+	if !exist {
+		return types.NewUnsupportedCoinError(coin, "unsupported coin")
+	}
+
+	delete(priceDatabaseMock, key)
+	return nil
 }

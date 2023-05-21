@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PriceService_GetPrice_FullMethodName = "/PriceService/GetPrice"
+	PriceService_GetPrice_FullMethodName   = "/PriceService/GetPrice"
+	PriceService_RemoveCoin_FullMethodName = "/PriceService/RemoveCoin"
 )
 
 // PriceServiceClient is the client API for PriceService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PriceServiceClient interface {
 	GetPrice(ctx context.Context, in *PriceRequest, opts ...grpc.CallOption) (*PriceResponse, error)
+	RemoveCoin(ctx context.Context, in *RemoveCoinRequest, opts ...grpc.CallOption) (*RemoveCoinResponse, error)
 }
 
 type priceServiceClient struct {
@@ -46,11 +48,21 @@ func (c *priceServiceClient) GetPrice(ctx context.Context, in *PriceRequest, opt
 	return out, nil
 }
 
+func (c *priceServiceClient) RemoveCoin(ctx context.Context, in *RemoveCoinRequest, opts ...grpc.CallOption) (*RemoveCoinResponse, error) {
+	out := new(RemoveCoinResponse)
+	err := c.cc.Invoke(ctx, PriceService_RemoveCoin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PriceServiceServer is the server API for PriceService service.
 // All implementations must embed UnimplementedPriceServiceServer
 // for forward compatibility
 type PriceServiceServer interface {
 	GetPrice(context.Context, *PriceRequest) (*PriceResponse, error)
+	RemoveCoin(context.Context, *RemoveCoinRequest) (*RemoveCoinResponse, error)
 	mustEmbedUnimplementedPriceServiceServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedPriceServiceServer struct {
 
 func (UnimplementedPriceServiceServer) GetPrice(context.Context, *PriceRequest) (*PriceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPrice not implemented")
+}
+func (UnimplementedPriceServiceServer) RemoveCoin(context.Context, *RemoveCoinRequest) (*RemoveCoinResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveCoin not implemented")
 }
 func (UnimplementedPriceServiceServer) mustEmbedUnimplementedPriceServiceServer() {}
 
@@ -92,6 +107,24 @@ func _PriceService_GetPrice_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PriceService_RemoveCoin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveCoinRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PriceServiceServer).RemoveCoin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PriceService_RemoveCoin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PriceServiceServer).RemoveCoin(ctx, req.(*RemoveCoinRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PriceService_ServiceDesc is the grpc.ServiceDesc for PriceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var PriceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPrice",
 			Handler:    _PriceService_GetPrice_Handler,
+		},
+		{
+			MethodName: "RemoveCoin",
+			Handler:    _PriceService_RemoveCoin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -4,6 +4,7 @@ option go_package = "github.com/farischt/micro/proto";
 
 service PriceService {
     rpc GetPrice(PriceRequest) returns (PriceResponse) {}
+    rpc RemoveCoin(RemoveCoinRequest) returns (RemoveCoinResponse) {}
 }
 
 message PriceRequest {
@@ -13,4 +14,13 @@ message PriceRequest {
 message PriceResponse {
     string coin = 1;
     float price = 2;
+}
+
+message RemoveCoinRequest {
+    string coin = 1;
+}
+
+message RemoveCoinResponse {
+    string coin = 1;
+    bool success = 2;
 }

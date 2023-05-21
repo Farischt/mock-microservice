@@ -34,3 +34,9 @@ func (c *GRPCService) GetPrice(ctx context.Context, coin string) (*proto.PriceRe
 		Coin: coin,
 	})
 }
+
+func (c *GRPCService) RemoveCoin(ctx context.Context, coin string) (*proto.RemoveCoinResponse, error) {
+	return c.client.RemoveCoin(ctx, &proto.RemoveCoinRequest{
+		Coin: coin,
+	})
+} 
