@@ -22,7 +22,6 @@ func New(baseUrl string) *Client {
 
 func (c *Client) GetCoinPrice(ctx context.Context, coin string) (*types.ApiResponse[types.PriceResponse], error) {
 	endpoint := fmt.Sprintf("%s/coin/%s", c.baseUrl, coin)
-	fmt.Println(endpoint)
 
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
