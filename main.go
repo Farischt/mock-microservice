@@ -28,6 +28,7 @@ func main() {
 	go func() {
 		select {
 		case <-doneChan:
+			logrus.Info("GRPC Server started")
 			ctx := context.Background()
 			_, _ = grpcClient.GetPrice(ctx, &proto.PriceRequest{
 				Coin: "ETH",
