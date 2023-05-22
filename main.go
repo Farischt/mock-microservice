@@ -22,26 +22,25 @@ func main() {
 	}
 
 	doneChan := make(chan bool)
-	go startGRPC(service, *port, doneChan)
-	go func(done <-chan bool) {
-		logrus.Info("Waiting for GRPC server to start")
-		<-done
-		ctx := context.Background()
-		grpcClient.GetPrice(ctx, &proto.PriceRequest{
-			Coin: "ETH",
-		})
-		grpcClient.GetPrice(ctx, &proto.PriceRequest{
-			Coin: "ET",
-		})
-	}(doneChan)
+	errChan := make(chan error)
+	go startGRPC(service, *port, doneChan, errChan) //nolint:errcheck
 
-	// jsonClient := client.New(fmt.Sprintf("http://localhost:%d", 8000))
+	go func() {
+		select {
+		case <-doneChan:
+			ctx := context.Background()
+			_, _ = grpcClient.GetPrice(ctx, &proto.PriceRequest{
+				Coin: "ETH",
+			})
+			_, _ = grpcClient.GetPrice(ctx, &proto.PriceRequest{
+				Coin: "ET",
+			})
 
-	// go func() {
-	// 	time.Sleep(2 * time.Second)
-	// 	ctx := context.Background()
-	// 	jsonClient.GetCoinPrice(ctx, "ETH")
-	// }()
+		case err := <-errChan:
+			logrus.Error(err)
+			panic(err)
+		}
+	}()
 
 	server := NewJsonApi(service, 8000)
 	server.Start()

@@ -5,10 +5,13 @@ import (
 
 	"github.com/farischt/micro/proto"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func NewGRPCService(addr string) (proto.PriceServiceClient, error) {
-	conn, err := grpc.Dial(addr, grpc.WithInsecure())
+	conn, err := grpc.Dial(addr,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
 
 	if err != nil {
 		return nil, err
@@ -39,4 +42,4 @@ func (c *GRPCService) RemoveCoin(ctx context.Context, coin string) (*proto.Remov
 	return c.client.RemoveCoin(ctx, &proto.RemoveCoinRequest{
 		Coin: coin,
 	})
-} 
+}

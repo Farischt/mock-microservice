@@ -10,14 +10,16 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-func startGRPC(s PriceService, addr uint, done chan<- bool) error {
+func startGRPC(s PriceService, addr uint, done chan<- bool, errChan chan<- error) error {
 	priceServiceServer := NewPriceServiceServer(s)
 	ln, err := net.Listen("tcp", fmt.Sprintf(":%d", addr))
 
 	if err != nil {
 		logrus.Error(err)
+		errChan <- err
 		return err
 	}
 
@@ -29,12 +31,20 @@ func startGRPC(s PriceService, addr uint, done chan<- bool) error {
 	proto.RegisterPriceServiceServer(server, priceServiceServer)
 
 	close(done)
-	return server.Serve(ln)
+	err = server.Serve(ln)
+
+	if err != nil {
+		logrus.Error(err)
+		errChan <- err
+		return err
+	}
+
+	return nil
 }
 
 type PriceServiceServer struct {
 	service PriceService
-	 
+
 	proto.UnimplementedPriceServiceServer
 }
 
@@ -50,10 +60,10 @@ func (s *PriceServiceServer) GetPrice(ctx context.Context, r *proto.PriceRequest
 
 	if err != nil {
 		if _, ok := err.(types.UnsupportedCoinError); ok {
-			return nil, grpc.Errorf(codes.NotFound, err.Error())
+			return nil, status.Errorf(codes.NotFound, err.Error())
 		}
 
-		return nil, grpc.Errorf(codes.Internal, "unknown error")
+		return nil, status.Errorf(codes.Internal, "unknown error")
 	}
 
 	response := new(proto.PriceResponse)
@@ -68,10 +78,10 @@ func (s *PriceServiceServer) RemoveCoin(ctx context.Context, r *proto.RemoveCoin
 
 	if err != nil {
 		if _, ok := err.(types.UnsupportedCoinError); ok {
-			return nil, grpc.Errorf(codes.NotFound, err.Error())
+			return nil, status.Errorf(codes.NotFound, err.Error())
 		}
 
-		return nil, grpc.Errorf(codes.Internal, "unknown error")
+		return nil, status.Errorf(codes.Internal, "unknown error")
 	}
 
 	response := new(proto.RemoveCoinResponse)

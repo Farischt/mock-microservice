@@ -28,7 +28,7 @@ func (s *Server) Start() {
 
 	r.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(200)
-		writeJSON(w, 200, map[string]string{
+		_ = writeJSON(w, 200, map[string]string{
 			"service": "price",
 			"status":  "healthy",
 		})
